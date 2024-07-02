@@ -1,5 +1,7 @@
 name: Test
 on: push
+env:
+  TEST_TAG: ${{ github.actor }}/asdf:test
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -11,5 +13,9 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          load: true
           pull: true
           push: false
+          tags: ${{ env.TEST_TAG }}
+      - name: Test loading asdf script
+        run: docker run --rm ${{ env.TEST_TAG }} bash -c 'source /asdf/.asdf/asdf.sh && asdf version'
